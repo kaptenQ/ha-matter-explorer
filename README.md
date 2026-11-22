@@ -1,4 +1,4 @@
-# Matter Explorer
+# <img src="docs/images/icon.png" alt="" width="40" height="40" align="top"> Matter Explorer
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
