@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1
+
+- Brand icon and logo (`custom_components/matter_explorer/brand/`), so HACS shows an icon and its brands check passes;
+  the icon is also in the README header.
+- Fix: with the filters side panel open, the "Add as entity" label in the tree was cut off. The attribute grid now
+  shrinks (names and paths wrap), and when the tree gets narrow it switches to the card layout.
+
 ## 1.0.0
 
 First public release. No behaviour change since 0.10.0 except the version.

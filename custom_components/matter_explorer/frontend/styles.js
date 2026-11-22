@@ -21,7 +21,7 @@ button.link { border: none; background: none; padding: 0 4px; color: var(--prima
 .status { color: var(--secondary-text-color); font-size: 12px; }
 .live::before { content: "●"; color: var(--success-color, #43a047); margin-right: 4px; }
 .off::before { content: "●"; color: var(--disabled-text-color, #9e9e9e); margin-right: 4px; }
-main { padding: 12px 16px 48px; max-width: 1400px; margin: 0 auto; }
+main { padding: 12px 16px 48px; max-width: 1400px; margin: 0 auto; container: explorer / inline-size; }
 .row { display: flex; align-items: baseline; gap: 8px; padding: 3px 6px; border-radius: 4px; min-height: 28px; }
 .row:hover { background: var(--secondary-background-color); }
 .toggle { cursor: pointer; user-select: none; }
@@ -37,9 +37,13 @@ main { padding: 12px 16px 48px; max-width: 1400px; margin: 0 auto; }
   color: var(--secondary-text-color); border: 1px solid var(--divider-color); white-space: nowrap; }
 .badge.warn { color: var(--error-color, #db4437); border-color: var(--error-color, #db4437); }
 .id { color: var(--secondary-text-color); font-size: 12px; font-family: var(--code-font-family, monospace); }
-.attr { display: grid; grid-template-columns: minmax(180px, 1.1fr) 70px minmax(140px, 2fr) minmax(100px, 1fr) 80px 28px minmax(150px, 1fr);
+/* Columns shrink (name/path wrap) so the last one always fits its unwrapped "Add as entity" label. */
+.attr { display: grid; grid-template-columns: minmax(110px, 1.1fr) 64px minmax(90px, 2fr) minmax(80px, 1fr) 72px 28px minmax(max-content, 1fr);
   gap: 8px; align-items: baseline; padding: 3px 6px; border-radius: 4px; }
 .attr:hover { background: var(--secondary-background-color); }
+.attr > * { min-width: 0; }
+.attr .aname, .attr .apath { overflow-wrap: anywhere; }
+.attr .entity-id { overflow-wrap: anywhere; }
 .attr .val { font-family: var(--code-font-family, monospace); word-break: break-word; }
 .attr .raw { color: var(--secondary-text-color); font-size: 12px; }
 .type { color: var(--secondary-text-color); font-size: 12px; }
@@ -89,7 +93,7 @@ td.sel { width: 28px; } .why { color: var(--secondary-text-color); font-size: 12
 .result.ok { border: 1px solid var(--success-color, #43a047); color: var(--success-color, #43a047); }
 .result.bad { border: 1px solid var(--error-color, #db4437); color: var(--error-color, #db4437); }
 button.danger { background: var(--error-color, #db4437); border-color: var(--error-color, #db4437); color: #fff; }
-label.expose { display: inline-flex; gap: 4px; align-items: center; font-size: 12px; cursor: pointer; }
+label.expose { white-space: nowrap; display: inline-flex; gap: 4px; align-items: center; font-size: 12px; cursor: pointer; }
 .entity-id { font-size: 11px; color: var(--secondary-text-color); font-family: var(--code-font-family, monospace); word-break: break-all; }
 .searchbox { position: relative; display: flex; align-items: center; flex: 1 1 240px; max-width: 420px; min-width: 200px; }
 .searchbox svg { position: absolute; left: 10px; width: 18px; height: 18px; fill: var(--secondary-text-color); pointer-events: none; }
@@ -139,8 +143,10 @@ kbd { font-family: var(--code-font-family, monospace); font-size: 11px; padding:
 @media (max-width: 700px) { header { padding-left: 8px; padding-right: 8px; }
   header { position: static; } .row { flex-wrap: wrap; } .node > .row .name { flex: 1 1 60%; min-width: 0; overflow-wrap: anywhere; }
   .badge { white-space: normal; overflow-wrap: anywhere; } main { padding-left: 8px; padding-right: 8px; } }
-/* Phone: each attribute is a card: name + value, then path / type / R/W, then the actions (touch targets >= 40 px). */
-@media (max-width: 600px) {
+/* Narrow main (phone, or a desktop with the filters panel open): each attribute is a card: name + value, then
+   path / type / R/W, then the actions. */
+@container explorer (max-width: 640px) {
+  .row { flex-wrap: wrap; }
   .attr { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; padding: 10px 12px; margin: 6px 0;
     border: 1px solid var(--divider-color); border-radius: 10px; background: var(--card-background-color); }
   .attr .aname { order: 1; flex: 1 1 40%; min-width: 0; font-weight: 500; overflow-wrap: anywhere; }
@@ -155,11 +161,15 @@ kbd { font-family: var(--code-font-family, monospace); font-size: 11px; padding:
   .attr button.edit { order: 8; }
   .attr button.link { order: 8; }
   .attr .expose-wrap { order: 8; }
+  .attr .entity-id { flex-basis: 100%; }
+  .attr:hover { background: var(--card-background-color); }
+  .attr label.expose { gap: 6px; }
+}
+/* Phone: touch targets >= 40 px. */
+@media (max-width: 600px) {
   .attr button, .attr label.expose { min-height: 40px; min-width: 40px; display: inline-flex; align-items: center; justify-content: center; padding: 0 12px; margin: 0; }
   .attr label.expose { justify-content: flex-start; gap: 8px; font-size: 14px; }
   .attr label.expose input { width: 20px; height: 20px; margin: 0; }
   .attr button.link { border: 1px solid var(--divider-color); }
-  .attr .entity-id { flex-basis: 100%; }
-  .attr:hover { background: var(--card-background-color); }
 }
 `;

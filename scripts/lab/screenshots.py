@@ -443,6 +443,44 @@ SCENARIOS = {
     "reconnect": rc_main,
 }
 
+# ---- panelopen -----------------------------------------------------------------------------------
+# 0190: the attribute grid with the filters panel open at 1400 and 1100 px; prints whether any
+# "Add as entity" label is clipped (its scrollWidth > its box, or its right edge past the row's).
+PO_NODE = lab_thermostat_node() if CMD == "panelopen" else 0
+PO_CLIP = (
+    "p => [...p.shadowRoot.querySelectorAll('label.expose')].filter(l => { const r = l.getBoundingClientRect();"
+    " const a = l.closest('.attr').getBoundingClientRect(); return l.scrollWidth > l.clientWidth + 1"
+    " || r.right > a.right + 1 || r.width < 60; }).length"
+)
+
+
+def po_main() -> None:
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch(executable_path=os.environ.get("CHROMIUM"))
+        for width in (1400, 1100):
+            page = browser.new_context(viewport={"width": width, "height": 900}).new_page()
+            login(page)
+            open_panel(page)
+            panel_eval(
+                page,
+                f"p => {{ p._expandAll(false); p._expanded.add('n{PO_NODE}'); p._expanded.add('n{PO_NODE}/e1');"
+                f" p._expanded.add('n{PO_NODE}/e1/c516'); p._expanded.add('n{PO_NODE}/e1/c513'); p._renderMain();"
+                " p._openFilters(true); }",
+            )
+            page.wait_for_timeout(500)
+            print(
+                width,
+                "labels:",
+                panel_eval(page, "p => p.shadowRoot.querySelectorAll('label.expose').length"),
+                "clipped:",
+                panel_eval(page, PO_CLIP),
+            )
+            page.screenshot(path=OUT / f"0190-panel-open-{width}.png")
+        browser.close()
+
+
+SCENARIOS["panelopen"] = po_main
+
 if __name__ == "__main__":
     if CMD not in SCENARIOS:
         sys.exit(__doc__)
