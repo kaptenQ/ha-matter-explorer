@@ -1,0 +1,41 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Matter Explorer version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: ha
+    attributes:
+      label: Home Assistant version
+    validations:
+      required: true
+  - type: input
+    id: server
+    attributes:
+      label: Matter Server (add-on or container) and version
+      placeholder: "matterjs-server 1.5.5"
+  - type: input
+    id: device
+    attributes:
+      label: Device (vendor, product, firmware), if it matters
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and diagnostics
+      description: >
+        Debug log with `custom_components.matter_explorer: debug`, and the downloaded diagnostics of the
+        integration. Remove anything private first.
+      render: text

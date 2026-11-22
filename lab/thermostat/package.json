@@ -1,0 +1,13 @@
+{
+  "name": "lab-thermostat",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Lab Matter thermostat that behaves like an IKEA LILJEBAGGE (matter.js)",
+  "engines": { "node": ">=22" },
+  "scripts": { "start": "node thermostat.mjs" },
+  "dependencies": {
+    "@matter/main": "0.15.6",
+    "@matter/nodejs": "0.15.6"
+  }
+}

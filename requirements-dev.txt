@@ -1,0 +1,9 @@
+# Test dependencies (Python >= 3.14).
+# pytest-homeassistant-custom-component has no release for HA 2026.11 yet; the newest (0.13.375)
+# pins homeassistant==2026.10.4. Tests run on that consistent pair, the lab runs HA 2026.11.2
+# (scripts/lab-deploy.sh) and covers the difference. Bump both when PHACC releases 2026.11.
+pytest-homeassistant-custom-component==0.13.375
+matter-python-client==1.5.5
+ruff
+mypy
+home-assistant-frontend==20260930.5  # panel_custom depends on frontend

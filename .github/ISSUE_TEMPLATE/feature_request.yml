@@ -1,0 +1,20 @@
+name: Feature request
+description: Suggest an attribute to make writable, or another improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What would you like to do?
+      description: The problem first, then the idea. For a new writable attribute give the cluster and attribute id.
+    validations:
+      required: true
+  - type: textarea
+    id: device
+    attributes:
+      label: Device and how you know it works
+      description: Vendor, product, a spec reference, or an export of the node from the panel (remove private data).
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered

@@ -1,0 +1,52 @@
+# On every push to main: run the tests, and if manifest.json has a version
+# without a release tag yet, create the GitHub release v<version> with
+# matter_explorer.zip and that version's CHANGELOG section as notes.
+name: Release
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: release
+  cancel-in-progress: false
+env:
+  MANIFEST: custom_components/matter_explorer/manifest.json
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: astral-sh/setup-uv@v6
+      - run: ./scripts/test.sh
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Release if the version is new
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(jq -r .version "$MANIFEST")
+          if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+            echo "v$VERSION is already released"; exit 0
+          fi
+          (cd custom_components/matter_explorer && zip -qr "$GITHUB_WORKSPACE/matter_explorer.zip" . -x '*__pycache__*')
+          awk -v v="$VERSION" '
+            $0 ~ "^## *\\[?" v "\\]?" {on=1; next}
+            on && /^## / {exit}
+            on {print}' CHANGELOG.md > notes.md 2>/dev/null || true
+          [ -s notes.md ] || echo "Matter Explorer $VERSION" > notes.md
+          gh release create "v$VERSION" matter_explorer.zip --target "$GITHUB_SHA" --title "v$VERSION" --notes-file notes.md

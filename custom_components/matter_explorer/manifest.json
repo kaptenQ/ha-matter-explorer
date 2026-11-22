@@ -1,0 +1,14 @@
+{
+  "domain": "matter_explorer",
+  "name": "Matter Explorer",
+  "codeowners": ["@kaptenQ"],
+  "config_flow": true,
+  "dependencies": ["matter", "http", "panel_custom"],
+  "documentation": "https://github.com/kaptenQ/ha-matter-explorer",
+  "integration_type": "service",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/kaptenQ/ha-matter-explorer/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "1.0.0"
+}

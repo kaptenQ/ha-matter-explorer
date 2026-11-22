@@ -1,0 +1,35 @@
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+extend-exclude = ["tests/fixtures"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "SIM", "RET", "PL", "RUF", "N", "ERA"]
+ignore = [
+    "PLR2004",  # Matter cluster / attribute ids and spec limits are literal numbers
+    "PLR0913",  # HA-style signatures (hass, node, endpoint, ...) take many arguments
+    "PLR0917",  # same
+    "PLR0911",  # path / value validators return early on purpose
+    "PLC0415",  # chip.clusters and matter_server.common.models are imported lazily (slow, optional)
+    "N818",     # HomeAssistantError subclasses named *Refused are public API of the gates
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/**" = ["ASYNC", "E501"]
+
+[tool.mypy]
+python_version = "3.14"
+files = ["custom_components"]
+ignore_missing_imports = true
+warn_unused_ignores = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "*.websocket_api"
+# voluptuous markers (vol.Required(...)) are not typed as the str | Marker that HA's decorator expects
+disable_error_code = ["dict-item"]

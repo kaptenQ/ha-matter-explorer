@@ -1,0 +1,69 @@
+# Example lab for developing Matter Explorer. Copy it, adjust it, and use it only with throw-away data:
+# every service here is disposable. Never point the lab scripts at a real Home Assistant.
+#
+#   docker compose -f lab/docker-compose.example.yml up -d
+#   python scripts/lab/bootstrap.py       # onboards HA, commissions the sample devices
+#   scripts/lab-deploy.sh                 # deploys the integration into ./lab/ha-config
+#
+# Matter needs IPv6 (mDNS, link-local/ULA addresses), hence the IPv6 bridge network.
+# The scripts expect the host names `homeassistant` and `matter-server` (HA_URL, MATTER_SERVER_URL), so run
+# them from a container on the same network or add the names to your /etc/hosts.
+
+name: matter-explorer-lab
+
+networks:
+  lab:
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+        - subnet: fd00:30::/64
+
+services:
+  matter-server:
+    image: ghcr.io/matter-js/matterjs-server:1.5.5
+    hostname: matter-server
+    # --enable-test-net-dcl: accept the matter.js test devices (they use a test attestation certificate)
+    command: ["--enable-test-net-dcl"]
+    volumes:
+      - matter-server-data:/data
+    ports:
+      - "5580:5580"
+    networks: [lab]
+    restart: unless-stopped
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:2026.11.2
+    hostname: homeassistant
+    volumes:
+      - ./ha-config:/config # lab/ha-config, where scripts/lab-deploy.sh copies the integration
+    ports:
+      - "8123:8123"
+    networks: [lab]
+    depends_on: [matter-server]
+    restart: unless-stopped
+
+  # Sample devices (the commands are indicative, adapt them to the matter.js example you use): matter.js nodes, commissioned by the bootstrap (setup codes 20202021 light, 20202022 sensor,
+  # 20202023 bridge). They run the matter.js example devices; the thermostat that mimics an IKEA LILJEBAGGE
+  # (code 20202024, lab/thermostat) is started by scripts/lab-thermostat.sh on the dev machine instead.
+  dev-light:
+    image: node:22
+    hostname: dev-light
+    working_dir: /app
+    command: ["npx", "--yes", "@matter/examples@0.15.6", "onoff", "--passcode", "20202021", "--discriminator", "3841"]
+    networks: [lab]
+  dev-sensor:
+    image: node:22
+    hostname: dev-sensor
+    working_dir: /app
+    command: ["npx", "--yes", "@matter/examples@0.15.6", "temperature", "--passcode", "20202022", "--discriminator", "3842"]
+    networks: [lab]
+  dev-bridge:
+    image: node:22
+    hostname: dev-bridge
+    working_dir: /app
+    command: ["npx", "--yes", "@matter/examples@0.15.6", "bridge", "--passcode", "20202023", "--discriminator", "3843"]
+    networks: [lab]
+
+volumes:
+  matter-server-data:

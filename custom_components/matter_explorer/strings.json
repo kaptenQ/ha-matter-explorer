@@ -1,0 +1,18 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Matter Explorer shows every attribute of every Matter device paired to Home Assistant. Nothing needs to be configured."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Matter Explorer is already set up."
+    }
+  },
+  "issues": {
+    "matter_not_loaded": {
+      "title": "Matter is not loaded",
+      "description": "Matter Explorer needs Home Assistant's Matter integration to be loaded and connected to the Matter Server ({reason}). Matter Explorer recovers by itself once the Matter integration is back; if it stays like this, check the Matter integration and the Matter Server add-on."
+    }
+  }
+}
